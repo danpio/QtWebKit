@@ -13,15 +13,15 @@ enum ScreenOrientation
     LandscapeInverted = 180,
     PortraitInverted = 90
 };
-static void writeX11OrientationAngleProperty(QWidget* widget, ScreenOrientation orientation = Portrait)
+static void writeX11OrientationAngleProperty(QWidget* widget, ScreenOrientation orientation = Portrait  )
 {
 
     if (widget) {
         WId id = widget->winId();
         Display *display = QX11Info::display();
         if (!display) return;
-        Atom orientationAngleAtom = XInternAtom(display, "_MEEGOTOUCH_ORIENTATION_ANGLE", false);
-        XChangeProperty(display, id, orientationAngleAtom, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&orientation, 1);
+        Atom orientationAngleAtom = XInternAtom(display, "_MEEGOTOUCH_ORIENTATION_ANGLE", true);
+        XChangeProperty(display, id, orientationAngleAtom, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&orientation, 0);
     }
 
 }
@@ -29,10 +29,16 @@ static void writeX11OrientationAngleProperty(QWidget* widget, ScreenOrientation 
 int main(int argc, char *argv[])
 {
 
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     MainWindow w;
-    writeX11OrientationAngleProperty(&w);
+    const int width = 854;
+    const int height = 480;
+    QGraphicsScene scene;
 
-   w.showFullScreen();
-    return a.exec();
+    w.setOrientation(MainWindow::ScreenOrientationAuto);
+
+
+   // writeX11OrientationAngleProperty(&w,Portrait);
+    w.showFullScreen();
+    return app.exec();
 }
